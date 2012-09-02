@@ -93,13 +93,13 @@ void main()
 
 	if(NdotL > 0.0)
 	{
-		color = NdotL * texture2D(diffuseMap, parallaxTextureCoordinate) * 0.8;
+		color = NdotL * texture2D(diffuseMap, tc) * 0.8;
 	}
 
 	// Add ambient light
-	//color += vec4(0.2, 0.2, 0.2, 1.0) * texture2D(diffuseMap, parallaxTextureCoordinate);
+	color += vec4(0.2, 0.2, 0.2, 1.0) * texture2D(diffuseMap, tc);
 
 	// Set the color of the currently processed fragment
-	gl_FragColor = texture2D(diffuseMap, parallaxTextureCoordinate);
+	gl_FragColor = color;
 	//gl_FragColor = vec4(normal, 1.0);
 }

@@ -406,7 +406,7 @@ void init()
 		glGenTextures(1, &diffuseMapID); // Generate a unique texture ID
 		glBindTexture(GL_TEXTURE_2D, diffuseMapID); // Activate the texture
 
-		png_data_t *image = read_png((char*)"assets/shadow-color.png");
+		png_data_t *image = read_png((char*)"assets/frustum-diffuse.png");
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -432,7 +432,7 @@ void init()
 		glGenTextures(1, &normalMapID); // Generate a unique texture ID
 		glBindTexture(GL_TEXTURE_2D, normalMapID); // Activate the texture
 
-		image = read_png((char*)"assets/photosculpt-graystonewall-normal.png");
+		image = read_png((char*)"assets/frustum-normal.png");
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -457,7 +457,7 @@ void init()
 		glGenTextures(1, &displacementMapID); // Generate a unique texture ID
 		glBindTexture(GL_TEXTURE_2D, displacementMapID); // Activate the texture
 
-		image = read_png((char*)"assets/shadow-bump.png");
+		image = read_png((char*)"assets/frustum-displacement.png");
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

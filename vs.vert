@@ -54,7 +54,7 @@ void main()
 					);
 
 	// 
-	mat4 modelViewMatrix = offset * rotY;
+	mat4 modelViewMatrix = offset * rotY * rotX;
 	vec4 cameraPos = modelViewMatrix * position;
 
 	// Save normalized device coordinates to GPU memory
