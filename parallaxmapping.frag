@@ -1,4 +1,4 @@
-// NOTES ON CONVERTING #version 330 TO OPENGL 2.1
+// NOTES ON CONVERTING shader #version 330 TO OPENGL 2.1
 //
 // In the fragment program, in becomes varying.
 // In the fragment program, gl_FragColor is the output color value.
@@ -8,7 +8,7 @@
 varying vec4 theColor;
 varying vec2 tc;
 varying vec3 n;
-varying vec4 toCamera;
+varying vec4 vec2Camera;
 
 // uniforms
 uniform float time;
@@ -33,14 +33,14 @@ mat3 calcTangentMatrix(vec3 normal, vec3 vec2cam, vec2 texCoord)
 	vec2 dtx = dFdx(texCoord);
 	vec2 dty = dFdy(texCoord);
 
-	// Do some magical magic
-	vec3 tangent 	= normalize( dpx * dty.t - dpy * dtx.t );
-	vec3 cotangent 	= normalize(-dpx * dty.s + dpy * dtx.s );
+	// Do some magical magic (which is: solving a system om equations)
+	vec3 tangent 	= normalize( ( dpx * dty.t - dpy * dtx.t ) );
+	vec3 cotangent 	= normalize( (-dpx * dty.s + dpy * dtx.s ) );
 
 	return mat3(tangent, cotangent, normal);
 }
 
-vec2 calcNewTexCoords(sampler2D displacementMap, vec2 tc, vec3 tsToCamera)
+vec2 calcNewTexCoords(sampler2D displacementMap, vec2 tc, vec3 tsVec2Camera)
 { 
 	// Get height from height map
 	float height = texture2D(displacementMap, tc).r; // .r because all color channels are the same
@@ -51,7 +51,7 @@ vec2 calcNewTexCoords(sampler2D displacementMap, vec2 tc, vec3 tsToCamera)
 	float height_bs = height * surfaceThickness + bias;
 
 	// Calculate new texture coordinate based on viewing angle
-	vec2 parallaxTextureOffset = height_bs * tsToCamera.xy;
+	vec2 parallaxTextureOffset = height_bs * tsVec2Camera.xy;
 
 	return parallaxTextureOffset;
 }
@@ -61,11 +61,12 @@ void main()
 	float currTime = mod(time, loopDuration);
 	float currLerp = currTime / loopDuration;
 
-	vec3 lightDir = vec3(-1.0, 1.0, 1.0);
+	// Vary the light direction to show off effect
+	vec3 lightDir = vec3(cos(5.0*currTime), 1.0, 1.0);
 
 	
 	// Calculate the TBN matrix with normalized vectors
-	vec3 toCam 	= (toCamera.xyz);
+	vec3 toCam 	= -vec2Camera.xyz;
 	vec3 normal = normalize(n);
 	mat3 TBN	= calcTangentMatrix(normal, toCam, tc);
 	mat3 TBNi	= mat3( // Inverse of TBN = transpose of TBN
@@ -78,13 +79,13 @@ void main()
 	// START: Parallax code //
 
 	// Transform the camera
-	vec3 tsToCamera = TBNi * -toCamera.xyz;
+	vec3 tsVec2Camera = TBNi * vec2Camera.xyz;
 
 	// WHAT DOES THIS DO!?
-	vec2 newCoords = tc + calcNewTexCoords(displacementMap, tc, tsToCamera); 
-	newCoords+=calcNewTexCoords(displacementMap, newCoords, tsToCamera);
-	newCoords+=calcNewTexCoords(displacementMap, newCoords, tsToCamera);
-	newCoords+=calcNewTexCoords(displacementMap, newCoords, tsToCamera);
+	vec2 newCoords = tc + calcNewTexCoords(displacementMap, tc, tsVec2Camera); 
+	newCoords+=calcNewTexCoords(displacementMap, newCoords, tsVec2Camera);
+	newCoords+=calcNewTexCoords(displacementMap, newCoords, tsVec2Camera);
+	newCoords+=calcNewTexCoords(displacementMap, newCoords, tsVec2Camera);
 
 
 	

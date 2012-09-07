@@ -112,10 +112,10 @@ GLuint CreateProgram(const std::vector<GLuint> &shaderList)
 					);
 
 	// 
-	glBindAttribLocation(program, 0, "position");
-	glBindAttribLocation(program, 1, "color");
-	glBindAttribLocation(program, 2, "texCoords");
-	glBindAttribLocation(program, 3, "normal");
+	glBindAttribLocation(program, 0, "vertexPosition");
+	glBindAttribLocation(program, 1, "vertexColor");
+	glBindAttribLocation(program, 2, "vertexTexCoords");
+	glBindAttribLocation(program, 3, "vertexNormal");
 
 	// Link shader objects to shader program
 	glLinkProgram(program);
@@ -489,7 +489,7 @@ void display()
 	// Send the offset values to the shader - move vertices in shader
 	glUniform1f(timeUniform, glutGet(GLUT_ELAPSED_TIME) / 1000.0f);
 
-	// Bund the buffer object
+	// Bind the buffer object
 	glBindBuffer(GL_ARRAY_BUFFER, bufferObject);
 	
 	// 
