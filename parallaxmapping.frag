@@ -43,15 +43,15 @@ mat3 calcTangentMatrix(vec3 normal, vec3 vec2cam, vec2 texCoord)
 vec2 calcNewTexCoords(sampler2D displacementMap, vec2 tc, vec3 tsVec2Camera)
 { 
 	// Get height from height map
-	float height = texture2D(displacementMap, tc).r; // .r because all color channels are the same
+	float height = texture2D(displacementMap, tc).r; // .r because the displacement map is monochromatic
 
 	// Calculate new height based on surface thickness and bias
 	float surfaceThickness = 0.015; // Thickness relative to width and height
 	float bias = surfaceThickness * -0.5;
-	float height_bs = height * surfaceThickness + bias;
+	float height_sb = height * surfaceThickness + bias;
 
 	// Calculate new texture coordinate based on viewing angle
-	vec2 parallaxTextureOffset = height_bs * tsVec2Camera.xy;
+	vec2 parallaxTextureOffset = height_sb * tsVec2Camera.xy;
 
 	return parallaxTextureOffset;
 }
@@ -62,7 +62,7 @@ void main()
 	float currLerp = currTime / loopDuration;
 
 	// Vary the light direction to show off effect
-	vec3 lightDir = vec3(cos(5.0*currTime), 1.0, 1.0);
+	vec3 lightDir = vec3(-1.0, 1.0, 1.0);
 
 	
 	// Calculate the TBN matrix with normalized vectors
@@ -75,22 +75,17 @@ void main()
 						TBN[0][2], TBN[1][2], TBN[2][2]
 						);
 
-
-	// START: Parallax code //
-
-	// Transform the camera
+	// Transform to tangent-space coordinates
 	vec3 tsVec2Camera = TBNi * vec2Camera.xyz;
 
-	// WHAT DOES THIS DO!?
+	// Calculate new texture coordinates for the parallax mapping effect.
+	// It's done a couple of times to exaggerate the effect. The exaggeration
+	// makes the effect look more realistic since it comes closer to a correct
+	// approximation of where the geometry should have been, if it existed.
 	vec2 newCoords = tc + calcNewTexCoords(displacementMap, tc, tsVec2Camera); 
-	newCoords+=calcNewTexCoords(displacementMap, newCoords, tsVec2Camera);
-	newCoords+=calcNewTexCoords(displacementMap, newCoords, tsVec2Camera);
-	newCoords+=calcNewTexCoords(displacementMap, newCoords, tsVec2Camera);
-
-
-	
-
-	// END: Parallax code //
+	newCoords += calcNewTexCoords(displacementMap, newCoords, tsVec2Camera);
+	newCoords += calcNewTexCoords(displacementMap, newCoords, tsVec2Camera);
+	newCoords += calcNewTexCoords(displacementMap, newCoords, tsVec2Camera);
 
 
 
